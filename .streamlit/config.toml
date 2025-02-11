@@ -1,0 +1,15 @@
+[theme]
+base="dark"
+# Color de elementos interactivos
+primaryColor="#fd0000"
+# background color para la principal area
+backgroundColor = "#0E1117"
+# background color usa la side bar
+secondaryBackgroundColor="#0e1117"
+# color que usa todo el color
+textColor="#f1eaea"
+#Tipo de letra
+font="monospace"
+
+[client]
+#toolbarMode = "minimal"
