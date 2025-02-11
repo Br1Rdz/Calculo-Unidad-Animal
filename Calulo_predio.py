@@ -3,7 +3,7 @@ import geemap
 import ee 
 # import os 
 import geemap.foliumap as geemap
-import datetime
+# import datetime
 import pandas as pd
 import plotly.express as px
 import geemap.colormaps as cm
