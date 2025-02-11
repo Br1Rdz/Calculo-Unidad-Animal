@@ -27,7 +27,7 @@ st.set_page_config(page_title="Cálculo de unidades animales para pastoreo",
 markdown = """
     Calculo de area idonea para el pastoreo apartir de imagenes LANDSAT8.
     Como funciona:
-    \n-Se seleccionan los píxeles donde idoneos del **NDVI**.
+    \n-Se seleccionan los píxeles idoneos del **NDVI**.
     \n-Se calcula el área total en m².
     \n-Se estima cuántas unidades animales puede soportar el predio  
     \n
