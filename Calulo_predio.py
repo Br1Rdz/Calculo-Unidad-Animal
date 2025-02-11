@@ -7,10 +7,15 @@ import datetime
 import pandas as pd
 import plotly.express as px
 import geemap.colormaps as cm
+import json
 
-#Credenciales de google earth engine
-ee.Authenticate()
-ee.Initialize(project='ee-brdzlopez')
+# Cargar los secretos
+json_data = st.secrets["json_data"]
+service_account = st.secrets["service_account"]
+
+# Authorising the app
+credentials = ee.ServiceAccountCredentials(service_account, key_data = json_data)
+ee.Initialize(credentials)
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Cálculo de unidades animales para pastoreo", 
