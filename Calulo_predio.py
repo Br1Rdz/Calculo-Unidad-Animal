@@ -17,11 +17,11 @@ credentials = ee.ServiceAccountCredentials(service_account, key_data = json_data
 ee.Initialize(credentials)
 
 #Configuracion de la pagina
-st.set_page_config(page_title="Cálculo de unidades animales para pastoreo", 
-                    page_icon=""🐄", 
-                   layout="wide",
-                   initial_sidebar_state="auto",
-                   menu_items=None)
+st.set_page_config(page_title = "Cálculo de unidades animales para pastoreo", 
+                    page_icon ="🐄", 
+                   layout = "wide",
+                   initial_sidebar_state = "auto",
+                   menu_items = None)
 
 markdown = """
     Cálculo de área idonea para el pastoreo apartir de imagenes LANDSAT 8.
