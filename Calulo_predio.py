@@ -117,7 +117,10 @@ Consumo_por_animal = st.text_input("Consumo animal en m²", "10.56")
 #Estimacion del consumo 
 Estimacion_consumo = area_m2['constant'] / float(Consumo_por_animal)
 
-st.markdown(f":gray-background[Para la fecha {image.get('DATE_ACQUIRED').getInfo()}, el área idónea fue de {area_m2['constant']:.2f} m², la cual soportar {Estimacion_consumo:.2f} unidades animales.]")
+#st.markdown(f":gray-background[Para la fecha {image.get('DATE_ACQUIRED').getInfo()}, el área idónea fue de {area_m2['constant']:.2f} m², la cual soportar {Estimacion_consumo:.2f} unidades animales.]")
+st.markdown(f"📅 **Fecha:** {image.get('DATE_ACQUIRED').getInfo()}")
+st.markdown(f"🌿 **Área idónea:** {area_m2['constant']:.2f} m²")
+st.markdown(f"🐄 **Unidades animales soportadas:** {Estimacion_consumo:.2f}")
 
 #Visualizacion del predio
 Map.addLayer(NDVI.clip(Sitio),
