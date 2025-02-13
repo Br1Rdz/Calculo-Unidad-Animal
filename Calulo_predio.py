@@ -1,10 +1,13 @@
 import streamlit as st 
-import geemap 
+from streamlit_folium import st_folium
+# import geemap 
 import ee 
 import geemap.foliumap as geemap
+import folium
 import pandas as pd
 import plotly.express as px
 import geemap.colormaps as cm
+import datetime
 import json
 
 json_data = st.secrets["json_data"]
