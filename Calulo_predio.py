@@ -18,7 +18,7 @@ ee.Initialize(credentials)
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Cálculo de unidades animales para pastoreo", 
-                    page_icon="📊", 
+                    page_icon=""🐄", 
                    layout="wide",
                    initial_sidebar_state="auto",
                    menu_items=None)
