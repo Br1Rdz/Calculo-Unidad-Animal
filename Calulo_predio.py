@@ -1,6 +1,5 @@
 import streamlit as st 
 from streamlit_folium import st_folium
-# import geemap 
 import ee 
 import geemap.foliumap as geemap
 import folium
@@ -8,20 +7,17 @@ import pandas as pd
 import plotly.express as px
 import geemap.colormaps as cm
 import datetime
-import json
 
-json_data = st.secrets["json_data"]
-service_account = st.secrets["service_account"]
-
-credentials = ee.ServiceAccountCredentials(service_account, key_data = json_data)
-ee.Initialize(credentials)
+#Credenciales de google earth engine
+ee.Authenticate()
+ee.Initialize(project='ee-brdzlopez')
 
 #Configuracion de la pagina
-st.set_page_config(page_title = "Cálculo de unidades animales para pastoreo", 
-                    page_icon ="🐄", 
-                   layout = "wide",
-                   initial_sidebar_state = "auto",
-                   menu_items = None)
+st.set_page_config(page_title="Cálculo de unidades animales para pastoreo", 
+                    page_icon="🐄", 
+                   layout="wide",
+                   initial_sidebar_state="auto",
+                   menu_items=None)
 
 markdown = """
     Cálculo de área idonea para el pastoreo apartir de imagenes LANDSAT 8.
@@ -43,7 +39,6 @@ logo = "./Clicker.jpg"
 st.sidebar.image(logo)
 
 st.title("📈 Cálculo de unidades animales")
-# st.markdown("<h1 style='text-align: center;'>Cálculo de unidades animales para un predio</h1>", unsafe_allow_html=True)
 
 # Fechas para ver diferentes cambios
 with st.expander("🔧 Configuración de parámetros", expanded=True):
@@ -60,8 +55,6 @@ Fecha_final = Final.strftime("%Y-%m-%d")
 
 # Mapa interactivo
 Map = geemap.Map(center=[23.634501, -102.552784], zoom=5, basemap="SATELLITE")
-# draw = folium.plugins.Draw(export = False)
-# draw.add_to(Map)
 
 # Mostrar mapa
 map_output = st_folium(Map, height=500, width=700)
@@ -70,25 +63,45 @@ if map_output and 'all_drawings' in map_output:
     if map_output['all_drawings']:
         geojson = map_output['all_drawings'][0]['geometry']
         predio = ee.Geometry(geojson)
-
+        #Imagen Landsat 8
         image = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')\
             .filterBounds(predio)\
             .filterDate(Fecha_inicio, Fecha_final)\
             .sort("CLOUD_COVER")\
             .first()
-        
+        #Caluculo de NDVI
+        def add_ee_layer(self, ee_image_object, vis_params, name):
+                map_id_dict = ee.Image(ee_image_object).getMapId(vis_params)
+                layer = folium.raster_layers.TileLayer(
+                    tiles=map_id_dict['tile_fetcher'].url_format,
+                    attr='Map Data &copy; <a href="https://earthengine.google.com/">Google Earth Engine</a>',
+                    name=name,
+                    overlay=True,
+                    control=True
+                )
+                layer.add_to(self)
+                return layer
+
+        # Add EE drawing method to folium.
+        folium.Map.add_ee_layer = add_ee_layer
+                
         NDVI = image.normalizedDifference(['SR_B5', 'SR_B4'])
+        palette = cm.get_palette("ndvi", n_class = 8)
+        vis_params = {"min": 0, "max": 1, "palette": palette}
         
+        Map.add_ee_layer(NDVI.clip(predio), vis_params,'NDVI')
+        
+        #Extraccion de pixeles idoneos del NVDI
         zones = ee.Image(0).where(NDVI.gt(0.10), 1).unmask(0)
         area_idonea = zones.multiply(ee.Image.pixelArea())
-        
+        #Vectorixacion de Pixeles
         area_dict = area_idonea.reduceRegion(
             reducer = ee.Reducer.sum(),
             geometry = predio,
             scale = 30,
             maxPixels = 1e13
         )
-        
+        #Calculo de capacidad de carga
         area_m2 = area_dict.getInfo().get('constant', 0)
         estimacion_consumo = area_m2 / Consumo_por_animal
         st.markdown(f":gray-background[Para la fecha {image.get('DATE_ACQUIRED').getInfo()}, el área idónea fue de {area_m2:.2f} m², la cual soportar {estimacion_consumo:.2f} unidades animales.]")
